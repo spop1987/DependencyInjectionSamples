@@ -1,14 +1,16 @@
+using DependencyInjectionSamples.Services.Interfaces;
+
 namespace DependencyInjectionSamples.Services
 {
     public class TertiaryService
     {
-        private readonly PrimaryService _primaryService;
+        private readonly IService _primaryService;
         private readonly SecondaryService _secondaryService;
         private readonly SecondaryService _secondaryServiceNewInstance;
         public static int CreationCount {get; private set;}
         public Guid Id { get; set; } 
         public TertiaryService(
-            PrimaryService primaryService,
+            IService primaryService,
             SecondaryService secondaryService,
             SecondaryService secondaryServiceNewInstance
         )
@@ -20,7 +22,7 @@ namespace DependencyInjectionSamples.Services
             CreationCount++;
         }
 
-        public Guid PrimaryServiceId => _primaryService.Id;
+        public Guid PrimaryServiceId => _primaryService.GetGuiId();
         public Guid SecondaryServiceId => _secondaryService.Id;
         public Guid SecondaryServiceNewInstanceId => _secondaryServiceNewInstance.Id;
     }

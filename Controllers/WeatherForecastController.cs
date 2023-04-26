@@ -1,4 +1,5 @@
 using DependencyInjectionSamples.Services;
+using DependencyInjectionSamples.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DependencyInjectionSamples.Controllers;
@@ -7,44 +8,24 @@ namespace DependencyInjectionSamples.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-    private readonly PrimaryService _primaryService;
     private readonly SecondaryService _secondaryService;
     private readonly TertiaryService _tertiaryService;
     private readonly QuaternaryService _quaternaryService;
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
-    private readonly ILogger<WeatherForecastController> _logger;
-
+    private readonly IService _service;
+ 
     public WeatherForecastController(
-        ILogger<WeatherForecastController> logger,
-        PrimaryService primaryService,
+        IService service,
         SecondaryService secondaryService,
         TertiaryService tertiaryService,
         QuaternaryService quaternaryService)
     {
-        _logger = logger;
-        _primaryService = primaryService;
+        _service = service;
         _secondaryService = secondaryService;
         _tertiaryService = tertiaryService;
         _quaternaryService = quaternaryService;
     }
 
-    [Route("GetWeatherForecast")]
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
-    {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = DateTime.Now.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
-    }
-
+    
     [Route("GetServices")]
     [HttpGet(Name = "GetServices")]
     public IActionResult GetServices()
@@ -52,7 +33,7 @@ public class WeatherForecastController : ControllerBase
         return Ok(new 
         {
             Id = Guid.NewGuid(),
-            PrimaryServiceId = _primaryService.Id,
+            PrimaryServiceId = _service.GetGuiId(),
             PrimaryServiceCount = PrimaryService.CreationCount,
             SecondaryService = new {
                 Id = _secondaryService.Id,
@@ -76,5 +57,13 @@ public class WeatherForecastController : ControllerBase
                 QuaternaryServiceCount = QuaternaryService.CreationCount
             }
         });
+    }
+
+    [Route("GetListOfServices")]
+    [HttpGet(Name = "GetListOfServices")]
+    public IActionResult GetListOfServices()
+    {
+        
+        return Ok(_service.GetType().Name);
     }
 }

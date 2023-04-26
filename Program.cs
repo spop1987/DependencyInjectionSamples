@@ -1,4 +1,5 @@
 using DependencyInjectionSamples.Services;
+using DependencyInjectionSamples.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<PrimaryService>();
+builder.Services.AddSingleton<IService, PrimaryService>();
 builder.Services.AddScoped<SecondaryService>();
 builder.Services.AddTransient<TertiaryService>();
 builder.Services.AddTransient<QuaternaryService>();
